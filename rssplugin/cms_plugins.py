@@ -14,7 +14,6 @@ from rssplugin.models import RSSPlugin
 
 
 rss_render_template = getattr(settings, 'CMS_RSS_PLUGIN_TEMPLATE', "rss/rss.html")
-feedparser_timeout = getattr(settings, 'CMS_RSS_PLUGIN_FEEDPARSER_TIMEOUT', 60)
 
 
 class RSSPluginForm(forms.ModelForm):
@@ -54,17 +53,10 @@ class PlanetPlugin(CMSPluginBase):
         return rss_url
 
     def _parse_feed(self, rss_url):
-        import socket
-        default_socket_timeout = socket.getdefaulttimeout()
-        try:
-            socket.setdefaulttimeout(feedparser_timeout)
-            feed = feedparser.parse(rss_url)
-            if 'bozo_exception' in feed:
-                logging.warning('Error parsing feed %s. Error: %s' % (rss_url, feed['bozo_exception']))
-                del feed['bozo_exception'] # have to delete to avoid pickling error in cache
-        finally:
-            socket.setdefaulttimeout(default_socket_timeout)
-
+        feed = feedparser.parse(rss_url)
+        if 'bozo_exception' in feed:
+            logging.warning('Error parsing feed %s. Error: %s' % (rss_url, feed['bozo_exception']))
+            del feed['bozo_exception'] # have to delete to avoid pickling error in cache
         return feed
 
 
