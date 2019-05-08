@@ -37,11 +37,11 @@ class PlanetPlugin(CMSPluginBase):
         return instance.template if instance.template else rss_render_template
 
     def render(self, context, instance, placeholder):
-        feed = cache.get(instance.rss_url)
-        if not feed:
-            url = self._build_feed_url(context, instance.rss_url)
-            feed = self._parse_feed(url)
-            cache.set(instance.rss_url, feed, instance.cache_time)
+        # feed = cache.get(instance.rss_url)
+        # if not feed:
+        url = self._build_feed_url(context, instance.rss_url)
+        feed = self._parse_feed(url)
+            # cache.set(instance.rss_url, feed, instance.cache_time)
         context.update({"instance": instance,
                         "feed": feed})
         return context
